@@ -3,9 +3,9 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-#3.2 The very basics
+## 3.2 The very basics
 
-#3.2.1 Objects
+# 3.2.1 Objects
 When solving quadratic equations, the solutions change depending on the values of a, b and c. Programming language can define variables and write expressions with these variables.
 
 ```{r}
@@ -27,7 +27,7 @@ print(a)
 
 We use the term 'object' to describe stuff that is stored in R. Objects can also be functions.
 
-#3.2.2 The workspace
+# 3.2.2 The workspace
 
 As we define objects in the console, we are actually changing the workspace.
 ```{r}
@@ -41,7 +41,7 @@ the Environment tab shows the values.
 ```
 
 
-#Functions
+# Functions
 
 The data analysis process can usually be described as a series of functions applied to the data. R includes predefined functions. They are available for immediate use. Unlike ls, most functions require one or more arguments. 
 
@@ -87,7 +87,7 @@ help("+")
 help("<")
 ```
 
-#Other prebuilt objects
+# Other prebuilt objects
 
 You can see available datasets by
 ```{r}
@@ -99,7 +99,7 @@ pi
 Inf+1
 ```
 
-#Variable names
+# Variable names
 
 Some basic rules in R: variable names have to start with a letter, can't contain spaces and should not be predefined variables.
 Convention: use meaningful words, use only lower case, and use underscores(_) as a substitute for spaces.
@@ -143,10 +143,80 @@ c <- -1
 ```
 
 
+## 3.7 Vectors
 
+In R, the most basic objects available to store data are vectors. In a data frame, each column is a vector.
 
+# Creating vectors
 
+We can create vectors using the function c, which stands for concatenate.
 
+```{r}
+codes<-c(380, 124, 818)
+codes
+country<-c("italy", "canada", "egypt")
+#single quote ' is okay, not back quote `
+```
 
+# Names
 
+Sometimes it is useful to name the entries of a vector. For example, when defining a vector of country codes, we can use the names to connect the two:
+
+```{r}
+codes<-c(italy=380, canada=124, egypt=818)
+# it's okay to use quotes
+codes
+```
+
+```{r}
+class(codes)
+names(codes)
+```
+
+```{r}
+codes<-c(380, 124, 818)
+country<-c("italy", "canada", "egypt")
+names(codes)<-country
+codes
+```
+
+# Sequences
+
+Another useful function for creating vectors generates sequences:
+```{r}
+seq(1,10)
+```
+The default is to go up in increments of 1, but a third argument lets us tell it how much to jump by:
+```{r}
+seq(1,10,2)
+```
+
+If we want consecutive integers, we can use the following shorthand:
+```{r}
+1:10
+```
+
+When we use these functions, R produces integers, not numerics, because they are typically used to index something.
+```{r}
+class(1:10)
+```
+However, if we create a sequence including non-integers, the class changes:
+```{r}
+class(seq(1, 10, 0.5))
+```
+
+# Subsetting
+
+We use square brackets to access specific elements of a vector. For the vector codes we defined above, we can access the second element using:
+```{r}
+codes[2]
+codes[c(1,3)]
+codes[1:2]
+```
+
+If the elements have names, we can also access the entries using these names. 
+```{r}
+codes["canada"]
+codes[c("egypt","italy")]
+```
 
