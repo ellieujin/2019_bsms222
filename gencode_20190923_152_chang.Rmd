@@ -24,7 +24,7 @@ d2 <- d %>% filter(feature_type == 'transcript')
 ```
 
 ```{r}
-#If the data is too big, use this method
+## If the data is too big, use this method
 write.table(d2, 'table.transcript_genecode.20190923.txt', sep='\t', quote=F, row.names = F, col.names = T)
 ```
 
@@ -37,7 +37,7 @@ d=read_delim('table.transcript_genecode.20190923.txt',delim='\t', skip = 5,
 
 
 ```{r}
-# Now apply the functions. 
+## transcript_support_level
 d$transcript_support_level <- as.character(do.call(rbind.data.frame, 
                                                     strsplit(d$info, 'transcript_support_level\\s+"'))[[2]])
 
@@ -46,7 +46,7 @@ d$transcript_support_level <- as.character(do.call(rbind.data.frame,
 ```
 
 ```{r}
-# Now apply the functions. 
+## gene_type
 d$gene_type <- as.character(do.call(rbind.data.frame, 
                                                     strsplit(d$info, 'gene_type\\s+"'))[[2]])
 
@@ -56,7 +56,7 @@ d$gene_type <- as.character(do.call(rbind.data.frame,
 
 1. With `transcript`, how many transcripts are categorized for each TSL?
 ```{r}
-# Be aware of 'space bar'
+## Be aware of 'space bar'
 d$transcript_support_level<-ifelse(d$transcript_support_level=="gene_id ", "NA", d$transcript_support_level)
 ```
 
