@@ -8,12 +8,6 @@ library(readr, quietly = T)
 ```
 
 ```{r}
-d = read_delim('gencode.v31.basic.annotation.gtf.gz', 
-               delim='\t', skip = 5, progress = F, 
-               col_names = F)
-```
-
-```{r}
 # Assign column names according to the GENCODE instruction.
 cols = c('chrom', 'source', 'feature_type', 'start', 'end', 'score', 'strand', 'phase', 'info')
 ```
@@ -26,48 +20,62 @@ d = read_delim('gencode.v31.basic.annotation.gtf.gz',
 ```
 
 ```{r}
-# First filter transcripts and create a data frame.
 d2 <- d %>% filter(feature_type == 'transcript')
+```
 
+```{r}
+write.table(d2, 'table.transcript_genecode.20190923.txt', sep='\t', quote=F, row.names = F, col.names = T)
+```
+
+```{r}
+d=read_delim('table.transcript_genecode.20190923.txt',delim='\t', skip = 5, 
+               progress = F,
+               col_names = cols)
+```
+
+
+
+```{r}
 # Now apply the functions. 
-d2$transcript_support_level <- as.character(do.call(rbind.data.frame, 
-                                                    strsplit(d2$info, 'transcript_support_level\\s+"'))[[2]])
+d$transcript_support_level <- as.character(do.call(rbind.data.frame, 
+                                                    strsplit(d$info, 'transcript_support_level\\s+"'))[[2]])
 
-d2$transcript_support_level <- as.character(do.call(rbind.data.frame, 
-                                                    strsplit( d2$transcript_support_level, '\\"'))[[1]])
+d$transcript_support_level <- as.character(do.call(rbind.data.frame, 
+                                                    strsplit( d$transcript_support_level, '\\"'))[[1]])
 ```
 
 ```{r}
 # Now apply the functions. 
-d2$gene_type <- as.character(do.call(rbind.data.frame, 
-                                                    strsplit(d2$info, 'gene_type\\s+"'))[[2]])
+d$gene_type <- as.character(do.call(rbind.data.frame, 
+                                                    strsplit(d$info, 'gene_type\\s+"'))[[2]])
 
-d2$gene_type <- as.character(do.call(rbind.data.frame, 
-                                                    strsplit( d2$gene_type, '\\"'))[[1]])
-```
-
-```{r}
-TSL<-data_frame(transcript_support_level = d2$transcript_support_level,
-                gene_type = d2$gene_type,
-                source = d$source)
+d$gene_type <- as.character(do.call(rbind.data.frame, 
+                                                    strsplit( d$gene_type, '\\"'))[[1]])
 ```
 
 
 1. With `transcript`, how many transcripts are categorized for each TSL?
 ```{r}
-table(TSL$transcript_support_level)
+d$transcript_support_level<-ifelse(d$transcript_support_level=="gene_id ", "NA", d$transcript_support_level)
+```
+
+```{r}
+d %>% select(transcript_support_level, gene_type, source) %>% group_by(transcript_support_level) %>%
+  summarise(total = n())
 ```
 
 
 2. From the first question, please count the number of transcript for each TSL by gene biotype.
 ```{r}
-table(TSL$gene_type)
+d %>% group_by(gene_type) %>%
+  summarise(total = n())
 ```
 
 
 3. From the first question, please count the number of transcript for each TSL by source.
 ```{r}
-table(TSL$source)
+d %>% group_by(source) %>%
+  summarise(total = n())
 ```
 
 
