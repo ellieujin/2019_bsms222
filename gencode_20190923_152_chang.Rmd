@@ -68,14 +68,14 @@ d %>% group_by(transcript_support_level) %>%
 
 2. From the first question, please count the number of transcript for each TSL by gene biotype.
 ```{r}
-d %>% group_by(gene_type) %>%
+d %>% group_by(transcript_support_level,gene_type) %>%
   summarise(total = n())
 ```
 
 
 3. From the first question, please count the number of transcript for each TSL by source.
 ```{r}
-d %>% group_by(source) %>%
+d %>% group_by(transcript_support_level,source) %>%
   summarise(total = n())
 ```
 
