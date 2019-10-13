@@ -1,0 +1,248 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{bash}
+wget https://www.dropbox.com/s/u3ii9x4wpnzazm5/data_brainspan_DFC.20190928.Rdata
+```
+
+```{r}
+load('data_brainspan_DFC.20190928.Rdata')
+```
+
+```{r}
+library(dslabs)
+library(tidyverse)
+library(ggthemes)
+```
+
+
+```{r}
+## stage group 만들기
+s<-s %>%
+  mutate(stage=case_when(
+    age %in% c("8 pcw","9 pcw", "12 pcw") ~ 2,
+    age %in% c("13 pcw","16 pcw", "17 pcw") ~ 3,
+    age %in% c("19 pcw","21 pcw", "24 pcw") ~ 4,
+    age %in% c("26 pcw","37 pcw") ~ 5,
+    age %in% c("4 mos") ~ 6,
+    age %in% c("10 mos","1 yrs") ~ 7,
+    age %in% c("2 yrs","3 yrs", "4 yrs") ~ 8,
+    age %in% c("8 yrs","11 yrs") ~ 9,
+    age %in% c("13 yrs","18 yrs", "19 yrs") ~ 10,
+    TRUE ~ 11))
+```
+
+```{r}
+## gene type에 따른 발현량 넣을 공간 마련하기
+s<-s %>%
+  mutate(protein_coding=0 , activated_ig=0, inactivated_ig=0, noncoding_rna=0) 
+```
+
+
+```{r}
+## ind에 g data의 해당 gene type만 추출한 index 넣기
+
+ind_pc<-(g$gene_type == "protein_coding" & !is.na(g$gene_type))
+
+ind_a_ig<-(g$gene_type %in% c("IG_C_gene","IG_D_gene","IG_J_gene","IG_LV_gene","IG_V_gene","TR_C_gene","TR_J_gene","TR_V_gene","TR_D_gene") & !is.na(g$gene_type))
+
+ind_ia_ig<-(g$gene_type %in% c("IG_pseudogene","IG_C_pseudogene","IG_J_pseudogene","IG_V_pseudogene", "TR_V_pseudogene","TR_J_pseudogene") & !is.na(g$gene_type))
+
+ind_nc_rna<-(g$gene_type %in% c("Mt_rRNA","Mt_tRNA","miRNA","misc_RNA","rRNA","scRNA","snRNA","snoRNA","ribozyme","sRNA","scaRNA") & !is.na(g$gene_type))
+```
+
+```{r}
+## length 사용해서 해당 gene type의 총 개수를 구하기 위함
+pc<-g$row_num[ind_pc]
+a_ig<-g$row_num[ind_a_ig]
+ia_ig<-g$row_num[ind_ia_ig]
+nc_rna<-g$row_num[ind_nc_rna]
+```
+
+```{r}
+## 35명의 해당 gene type의 평균 발현량 구하기
+s$protein_coding[1]<-sum(e$X1[ind_pc]) / length(pc)
+s$protein_coding[2]<-sum(e$X2[ind_pc]) / length(pc)
+s$protein_coding[3]<-sum(e$X3[ind_pc]) / length(pc)
+s$protein_coding[4]<-sum(e$X4[ind_pc]) / length(pc)
+s$protein_coding[5]<-sum(e$X5[ind_pc]) / length(pc)
+s$protein_coding[6]<-sum(e$X6[ind_pc]) / length(pc)
+s$protein_coding[7]<-sum(e$X7[ind_pc]) / length(pc)
+s$protein_coding[8]<-sum(e$X8[ind_pc]) / length(pc)
+s$protein_coding[9]<-sum(e$X9[ind_pc]) / length(pc)
+s$protein_coding[10]<-sum(e$X10[ind_pc]) / length(pc)
+s$protein_coding[11]<-sum(e$X11[ind_pc]) / length(pc)
+s$protein_coding[12]<-sum(e$X12[ind_pc]) / length(pc)
+s$protein_coding[13]<-sum(e$X13[ind_pc]) / length(pc)
+s$protein_coding[14]<-sum(e$X14[ind_pc]) / length(pc)
+s$protein_coding[15]<-sum(e$X15[ind_pc]) / length(pc)
+s$protein_coding[16]<-sum(e$X16[ind_pc]) / length(pc)
+s$protein_coding[17]<-sum(e$X17[ind_pc]) / length(pc)
+s$protein_coding[18]<-sum(e$X18[ind_pc]) / length(pc)
+s$protein_coding[19]<-sum(e$X19[ind_pc]) / length(pc)
+s$protein_coding[20]<-sum(e$X20[ind_pc]) / length(pc)
+s$protein_coding[21]<-sum(e$X21[ind_pc]) / length(pc)
+s$protein_coding[22]<-sum(e$X22[ind_pc]) / length(pc)
+s$protein_coding[23]<-sum(e$X23[ind_pc]) / length(pc)
+s$protein_coding[24]<-sum(e$X24[ind_pc]) / length(pc)
+s$protein_coding[25]<-sum(e$X25[ind_pc]) / length(pc)
+s$protein_coding[26]<-sum(e$X26[ind_pc]) / length(pc)
+s$protein_coding[27]<-sum(e$X27[ind_pc]) / length(pc)
+s$protein_coding[28]<-sum(e$X28[ind_pc]) / length(pc)
+s$protein_coding[29]<-sum(e$X29[ind_pc]) / length(pc)
+s$protein_coding[30]<-sum(e$X30[ind_pc]) / length(pc)
+s$protein_coding[31]<-sum(e$X31[ind_pc]) / length(pc)
+s$protein_coding[32]<-sum(e$X32[ind_pc]) / length(pc)
+s$protein_coding[33]<-sum(e$X33[ind_pc]) / length(pc)
+s$protein_coding[34]<-sum(e$X34[ind_pc]) / length(pc)
+s$protein_coding[35]<-sum(e$X35[ind_pc]) / length(pc)
+
+# 내가 column 번호를 주면 colname을 돌려주는 함수를 알면 for문 돌려서 노가다 안 해도 될 것 같은데,,
+
+s$activated_ig[1]<-sum(e$X1[ind_a_ig]) / length(a_ig)
+s$activated_ig[2]<-sum(e$X2[ind_a_ig]) / length(a_ig)
+s$activated_ig[3]<-sum(e$X3[ind_a_ig]) / length(a_ig)
+s$activated_ig[4]<-sum(e$X4[ind_a_ig]) / length(a_ig)
+s$activated_ig[5]<-sum(e$X5[ind_a_ig]) / length(a_ig)
+s$activated_ig[6]<-sum(e$X6[ind_a_ig]) / length(a_ig)
+s$activated_ig[7]<-sum(e$X7[ind_a_ig]) / length(a_ig)
+s$activated_ig[8]<-sum(e$X8[ind_a_ig]) / length(a_ig)
+s$activated_ig[9]<-sum(e$X9[ind_a_ig]) / length(a_ig)
+s$activated_ig[10]<-sum(e$X10[ind_a_ig]) / length(a_ig)
+s$activated_ig[11]<-sum(e$X11[ind_a_ig]) / length(a_ig)
+s$activated_ig[12]<-sum(e$X12[ind_a_ig]) / length(a_ig)
+s$activated_ig[13]<-sum(e$X13[ind_a_ig]) / length(a_ig)
+s$activated_ig[14]<-sum(e$X14[ind_a_ig]) / length(a_ig)
+s$activated_ig[15]<-sum(e$X15[ind_a_ig]) / length(a_ig)
+s$activated_ig[16]<-sum(e$X16[ind_a_ig]) / length(a_ig)
+s$activated_ig[17]<-sum(e$X17[ind_a_ig]) / length(a_ig)
+s$activated_ig[18]<-sum(e$X18[ind_a_ig]) / length(a_ig)
+s$activated_ig[19]<-sum(e$X19[ind_a_ig]) / length(a_ig)
+s$activated_ig[20]<-sum(e$X20[ind_a_ig]) / length(a_ig)
+s$activated_ig[21]<-sum(e$X21[ind_a_ig]) / length(a_ig)
+s$activated_ig[22]<-sum(e$X22[ind_a_ig]) / length(a_ig)
+s$activated_ig[23]<-sum(e$X23[ind_a_ig]) / length(a_ig)
+s$activated_ig[24]<-sum(e$X24[ind_a_ig]) / length(a_ig)
+s$activated_ig[25]<-sum(e$X25[ind_a_ig]) / length(a_ig)
+s$activated_ig[26]<-sum(e$X26[ind_a_ig]) / length(a_ig)
+s$activated_ig[27]<-sum(e$X27[ind_a_ig]) / length(a_ig)
+s$activated_ig[28]<-sum(e$X28[ind_a_ig]) / length(a_ig)
+s$activated_ig[29]<-sum(e$X29[ind_a_ig]) / length(a_ig)
+s$activated_ig[30]<-sum(e$X30[ind_a_ig]) / length(a_ig)
+s$activated_ig[31]<-sum(e$X31[ind_a_ig]) / length(a_ig)
+s$activated_ig[32]<-sum(e$X32[ind_a_ig]) / length(a_ig)
+s$activated_ig[33]<-sum(e$X33[ind_a_ig]) / length(a_ig)
+s$activated_ig[34]<-sum(e$X34[ind_a_ig]) / length(a_ig)
+s$activated_ig[35]<-sum(e$X35[ind_a_ig]) / length(a_ig)
+
+
+s$inactivated_ig[1]<-sum(e$X1[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[2]<-sum(e$X2[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[3]<-sum(e$X3[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[4]<-sum(e$X4[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[5]<-sum(e$X5[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[6]<-sum(e$X6[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[7]<-sum(e$X7[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[8]<-sum(e$X8[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[9]<-sum(e$X9[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[10]<-sum(e$X10[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[11]<-sum(e$X11[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[12]<-sum(e$X12[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[13]<-sum(e$X13[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[14]<-sum(e$X14[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[15]<-sum(e$X15[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[16]<-sum(e$X16[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[17]<-sum(e$X17[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[18]<-sum(e$X18[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[19]<-sum(e$X19[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[20]<-sum(e$X20[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[21]<-sum(e$X21[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[22]<-sum(e$X22[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[23]<-sum(e$X23[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[24]<-sum(e$X24[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[25]<-sum(e$X25[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[26]<-sum(e$X26[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[27]<-sum(e$X27[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[28]<-sum(e$X28[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[29]<-sum(e$X29[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[30]<-sum(e$X30[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[31]<-sum(e$X31[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[32]<-sum(e$X32[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[33]<-sum(e$X33[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[34]<-sum(e$X34[ind_ia_ig]) / length(ia_ig)
+s$inactivated_ig[35]<-sum(e$X35[ind_ia_ig]) / length(ia_ig)
+
+
+s$noncoding_rna[1]<-sum(e$X1[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[2]<-sum(e$X2[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[3]<-sum(e$X3[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[4]<-sum(e$X4[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[5]<-sum(e$X5[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[6]<-sum(e$X6[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[7]<-sum(e$X7[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[8]<-sum(e$X8[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[9]<-sum(e$X9[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[10]<-sum(e$X10[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[11]<-sum(e$X11[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[12]<-sum(e$X12[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[13]<-sum(e$X13[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[14]<-sum(e$X14[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[15]<-sum(e$X15[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[16]<-sum(e$X16[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[17]<-sum(e$X17[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[18]<-sum(e$X18[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[19]<-sum(e$X19[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[20]<-sum(e$X20[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[21]<-sum(e$X21[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[22]<-sum(e$X22[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[23]<-sum(e$X23[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[24]<-sum(e$X24[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[25]<-sum(e$X25[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[26]<-sum(e$X26[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[27]<-sum(e$X27[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[28]<-sum(e$X28[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[29]<-sum(e$X29[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[30]<-sum(e$X30[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[31]<-sum(e$X31[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[32]<-sum(e$X32[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[33]<-sum(e$X33[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[34]<-sum(e$X34[ind_nc_rna]) / length(nc_rna)
+s$noncoding_rna[35]<-sum(e$X35[ind_nc_rna]) / length(nc_rna)
+```
+
+```{r}
+## stage별 평균 구해서 color blind friendly 색으로 line 그리기
+#p<-
+s %>%
+  group_by(stage) %>%
+  summarise(avg_pc = mean(protein_coding), avg_a_ig = mean(activated_ig), avg_ia_ig=mean(inactivated_ig), avg_nc_rna=mean(noncoding_rna)) %>%
+  ggplot() +
+  geom_line(aes(stage, avg_pc),col="#CC79A7") +
+  geom_line(aes(stage, avg_a_ig),col="#009E73") +
+  geom_line(aes(stage, avg_ia_ig),col="#56B4E9") +
+  geom_line(aes(stage, avg_nc_rna),col="#E69F00") +
+  geom_text(aes(x=10,y=5,label="Protein coding"),colour="#CC79A7")+
+  geom_text(aes(x=10, y=0.4,label="Non-coding RNA"), colour="#E69F00")+
+  geom_text(aes(x=10, y=0.07,label="Activated Ig"), colour="#009E73")+
+  geom_text(aes(x=10, y=0.003,label="Inactivated Ig"), colour="#56B4E9")+
+  scale_y_log10() +
+  scale_x_continuous(breaks = seq(0,12,1)) +
+  ggtitle("Gene Expression in Brain by Stage") + 
+  xlab("Stage") + 
+  ylab("Expression (RPKM, log scale)")+
+  theme(panel.grid.minor.x = element_blank())
+```
+
+```{r}
+#ggsave("plot.BrainSpan.line_GeneExpressionByStage.20191017.pdf",p, width=9, height=9)
+```
+
+ 노가다가 답인지 여쭤보기, stage 설명 추가할 수 있는지 알아보기
+
+
+
+
+
+
+
