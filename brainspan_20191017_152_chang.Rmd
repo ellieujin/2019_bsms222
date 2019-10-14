@@ -39,7 +39,6 @@ s<-s %>%
   mutate(protein_coding=0 , activated_ig=0, inactivated_ig=0, noncoding_rna=0) 
 ```
 
-
 ```{r}
 ## ind에 g data의 해당 gene type만 추출한 index 넣기
 
@@ -62,153 +61,36 @@ nc_rna<-g$row_num[ind_nc_rna]
 
 ```{r}
 ## 35명의 해당 gene type의 평균 발현량 구하기
-s$protein_coding[1]<-sum(e$X1[ind_pc]) / length(pc)
-s$protein_coding[2]<-sum(e$X2[ind_pc]) / length(pc)
-s$protein_coding[3]<-sum(e$X3[ind_pc]) / length(pc)
-s$protein_coding[4]<-sum(e$X4[ind_pc]) / length(pc)
-s$protein_coding[5]<-sum(e$X5[ind_pc]) / length(pc)
-s$protein_coding[6]<-sum(e$X6[ind_pc]) / length(pc)
-s$protein_coding[7]<-sum(e$X7[ind_pc]) / length(pc)
-s$protein_coding[8]<-sum(e$X8[ind_pc]) / length(pc)
-s$protein_coding[9]<-sum(e$X9[ind_pc]) / length(pc)
-s$protein_coding[10]<-sum(e$X10[ind_pc]) / length(pc)
-s$protein_coding[11]<-sum(e$X11[ind_pc]) / length(pc)
-s$protein_coding[12]<-sum(e$X12[ind_pc]) / length(pc)
-s$protein_coding[13]<-sum(e$X13[ind_pc]) / length(pc)
-s$protein_coding[14]<-sum(e$X14[ind_pc]) / length(pc)
-s$protein_coding[15]<-sum(e$X15[ind_pc]) / length(pc)
-s$protein_coding[16]<-sum(e$X16[ind_pc]) / length(pc)
-s$protein_coding[17]<-sum(e$X17[ind_pc]) / length(pc)
-s$protein_coding[18]<-sum(e$X18[ind_pc]) / length(pc)
-s$protein_coding[19]<-sum(e$X19[ind_pc]) / length(pc)
-s$protein_coding[20]<-sum(e$X20[ind_pc]) / length(pc)
-s$protein_coding[21]<-sum(e$X21[ind_pc]) / length(pc)
-s$protein_coding[22]<-sum(e$X22[ind_pc]) / length(pc)
-s$protein_coding[23]<-sum(e$X23[ind_pc]) / length(pc)
-s$protein_coding[24]<-sum(e$X24[ind_pc]) / length(pc)
-s$protein_coding[25]<-sum(e$X25[ind_pc]) / length(pc)
-s$protein_coding[26]<-sum(e$X26[ind_pc]) / length(pc)
-s$protein_coding[27]<-sum(e$X27[ind_pc]) / length(pc)
-s$protein_coding[28]<-sum(e$X28[ind_pc]) / length(pc)
-s$protein_coding[29]<-sum(e$X29[ind_pc]) / length(pc)
-s$protein_coding[30]<-sum(e$X30[ind_pc]) / length(pc)
-s$protein_coding[31]<-sum(e$X31[ind_pc]) / length(pc)
-s$protein_coding[32]<-sum(e$X32[ind_pc]) / length(pc)
-s$protein_coding[33]<-sum(e$X33[ind_pc]) / length(pc)
-s$protein_coding[34]<-sum(e$X34[ind_pc]) / length(pc)
-s$protein_coding[35]<-sum(e$X35[ind_pc]) / length(pc)
+compute_avg_pc <- function(n){
+  a<-as.character(n)
+  b<-paste0("X",a)
+  s$protein_coding[n]<-sum(e[[b]][ind_pc]) / length(pc)
+}
 
-# 내가 column 번호를 주면 colname을 돌려주는 함수를 알면 for문 돌려서 노가다 안 해도 될 것 같은데,,
+compute_avg_a_ig <- function(n){
+  a<-as.character(n)
+  b<-paste0("X",a)
+  s$activated_ig[n]<-sum(e[[b]][ind_a_ig]) / length(a_ig)
+}
 
-s$activated_ig[1]<-sum(e$X1[ind_a_ig]) / length(a_ig)
-s$activated_ig[2]<-sum(e$X2[ind_a_ig]) / length(a_ig)
-s$activated_ig[3]<-sum(e$X3[ind_a_ig]) / length(a_ig)
-s$activated_ig[4]<-sum(e$X4[ind_a_ig]) / length(a_ig)
-s$activated_ig[5]<-sum(e$X5[ind_a_ig]) / length(a_ig)
-s$activated_ig[6]<-sum(e$X6[ind_a_ig]) / length(a_ig)
-s$activated_ig[7]<-sum(e$X7[ind_a_ig]) / length(a_ig)
-s$activated_ig[8]<-sum(e$X8[ind_a_ig]) / length(a_ig)
-s$activated_ig[9]<-sum(e$X9[ind_a_ig]) / length(a_ig)
-s$activated_ig[10]<-sum(e$X10[ind_a_ig]) / length(a_ig)
-s$activated_ig[11]<-sum(e$X11[ind_a_ig]) / length(a_ig)
-s$activated_ig[12]<-sum(e$X12[ind_a_ig]) / length(a_ig)
-s$activated_ig[13]<-sum(e$X13[ind_a_ig]) / length(a_ig)
-s$activated_ig[14]<-sum(e$X14[ind_a_ig]) / length(a_ig)
-s$activated_ig[15]<-sum(e$X15[ind_a_ig]) / length(a_ig)
-s$activated_ig[16]<-sum(e$X16[ind_a_ig]) / length(a_ig)
-s$activated_ig[17]<-sum(e$X17[ind_a_ig]) / length(a_ig)
-s$activated_ig[18]<-sum(e$X18[ind_a_ig]) / length(a_ig)
-s$activated_ig[19]<-sum(e$X19[ind_a_ig]) / length(a_ig)
-s$activated_ig[20]<-sum(e$X20[ind_a_ig]) / length(a_ig)
-s$activated_ig[21]<-sum(e$X21[ind_a_ig]) / length(a_ig)
-s$activated_ig[22]<-sum(e$X22[ind_a_ig]) / length(a_ig)
-s$activated_ig[23]<-sum(e$X23[ind_a_ig]) / length(a_ig)
-s$activated_ig[24]<-sum(e$X24[ind_a_ig]) / length(a_ig)
-s$activated_ig[25]<-sum(e$X25[ind_a_ig]) / length(a_ig)
-s$activated_ig[26]<-sum(e$X26[ind_a_ig]) / length(a_ig)
-s$activated_ig[27]<-sum(e$X27[ind_a_ig]) / length(a_ig)
-s$activated_ig[28]<-sum(e$X28[ind_a_ig]) / length(a_ig)
-s$activated_ig[29]<-sum(e$X29[ind_a_ig]) / length(a_ig)
-s$activated_ig[30]<-sum(e$X30[ind_a_ig]) / length(a_ig)
-s$activated_ig[31]<-sum(e$X31[ind_a_ig]) / length(a_ig)
-s$activated_ig[32]<-sum(e$X32[ind_a_ig]) / length(a_ig)
-s$activated_ig[33]<-sum(e$X33[ind_a_ig]) / length(a_ig)
-s$activated_ig[34]<-sum(e$X34[ind_a_ig]) / length(a_ig)
-s$activated_ig[35]<-sum(e$X35[ind_a_ig]) / length(a_ig)
+compute_avg_ia_ig <- function(n){
+  a<-as.character(n)
+  b<-paste0("X",a)
+  s$inactivated_ig[n]<-sum(e[[b]][ind_ia_ig]) / length(ia_ig)
+}
+
+compute_avg_nc_rna <- function(n){
+  a<-as.character(n)
+  b<-paste0("X",a)
+  s$noncoding_rna[n]<-sum(e[[b]][ind_nc_rna]) / length(nc_rna)
+}
 
 
-s$inactivated_ig[1]<-sum(e$X1[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[2]<-sum(e$X2[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[3]<-sum(e$X3[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[4]<-sum(e$X4[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[5]<-sum(e$X5[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[6]<-sum(e$X6[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[7]<-sum(e$X7[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[8]<-sum(e$X8[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[9]<-sum(e$X9[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[10]<-sum(e$X10[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[11]<-sum(e$X11[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[12]<-sum(e$X12[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[13]<-sum(e$X13[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[14]<-sum(e$X14[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[15]<-sum(e$X15[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[16]<-sum(e$X16[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[17]<-sum(e$X17[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[18]<-sum(e$X18[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[19]<-sum(e$X19[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[20]<-sum(e$X20[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[21]<-sum(e$X21[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[22]<-sum(e$X22[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[23]<-sum(e$X23[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[24]<-sum(e$X24[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[25]<-sum(e$X25[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[26]<-sum(e$X26[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[27]<-sum(e$X27[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[28]<-sum(e$X28[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[29]<-sum(e$X29[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[30]<-sum(e$X30[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[31]<-sum(e$X31[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[32]<-sum(e$X32[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[33]<-sum(e$X33[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[34]<-sum(e$X34[ind_ia_ig]) / length(ia_ig)
-s$inactivated_ig[35]<-sum(e$X35[ind_ia_ig]) / length(ia_ig)
-
-
-s$noncoding_rna[1]<-sum(e$X1[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[2]<-sum(e$X2[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[3]<-sum(e$X3[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[4]<-sum(e$X4[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[5]<-sum(e$X5[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[6]<-sum(e$X6[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[7]<-sum(e$X7[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[8]<-sum(e$X8[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[9]<-sum(e$X9[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[10]<-sum(e$X10[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[11]<-sum(e$X11[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[12]<-sum(e$X12[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[13]<-sum(e$X13[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[14]<-sum(e$X14[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[15]<-sum(e$X15[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[16]<-sum(e$X16[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[17]<-sum(e$X17[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[18]<-sum(e$X18[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[19]<-sum(e$X19[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[20]<-sum(e$X20[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[21]<-sum(e$X21[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[22]<-sum(e$X22[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[23]<-sum(e$X23[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[24]<-sum(e$X24[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[25]<-sum(e$X25[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[26]<-sum(e$X26[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[27]<-sum(e$X27[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[28]<-sum(e$X28[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[29]<-sum(e$X29[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[30]<-sum(e$X30[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[31]<-sum(e$X31[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[32]<-sum(e$X32[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[33]<-sum(e$X33[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[34]<-sum(e$X34[ind_nc_rna]) / length(nc_rna)
-s$noncoding_rna[35]<-sum(e$X35[ind_nc_rna]) / length(nc_rna)
+y<-1:35
+s$protein_coding<-sapply(y,compute_avg_pc)
+s$activated_ig<-sapply(y,compute_avg_a_ig)
+s$inactivated_ig<-sapply(y,compute_avg_ia_ig)
+s$noncoding_rna<-sapply(y,compute_avg_nc_rna)
 ```
 
 ```{r}
@@ -237,9 +119,3 @@ s %>%
 ```{r}
 #ggsave("plot.BrainSpan.line_GeneExpressionByStage.20191017.pdf",p, width=9, height=9)
 ```
-
- 노가다가 답인지 여쭤보기, stage 설명 추가할 수 있는지 알아보기
-
-
-
-
