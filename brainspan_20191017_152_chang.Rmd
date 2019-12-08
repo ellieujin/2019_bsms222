@@ -6,6 +6,15 @@ output: html_notebook
 # Analyzing Brain Span Data
 
 Brain Span Data가 만들어지기까지의 과정이 담긴 [PDF](file:///C:/Users/%EC%9E%A5%EC%9D%80%ED%98%95/Downloads/Transcriptome_Profiling%20(8).pdf)이다.
+각 단계를요약하자면, 
+
+- developmental stage별로 뇌 조직 샘플을 얻는다.
+- Illumina Omni-2.5 million SNP arrays를 이용하여 genotyping 한다.
+- gene expression을 알기 위해 total RNA를 추출 후 mRNA를 추출한다.
+- mRNA를 이용해 cDNA를 합성하고 sequencing한다. 
+- 그 후 reference sequence를 바탕으로 alignment를 진행한다. reference sequence로는 human genome sequence (hg19, GRCh37)를 이용한다.
+- alignment output인 BAM을 SAM으로 바꾸고, 최종적으로 MRF(Mapped Read Format)으로 바꾼다.
+- MRF를 이용해 RPKM 단위로 Expression을 측정한다.
 
 ### 1.Brain Span Data를 다운받고 로드하기
 
@@ -22,7 +31,7 @@ load('data_brainspan_DFC.20190928.Rdata')
 ### 2. Data 살펴보기
 
 1. e 데이터의 row에는 52376의 gene, column에는 참가자 35명이 있다. 35명의 gene에 대한 발현량을 나타낸 데이터이다. 발현량의 단위는 RPKM이다. RPKM은 Reads Per Kilobase of transcript per Million mapped reads의 약자이다. 
-$RPKM = Total fragments / Mapped Reads(millions)*Exon Length(Kb)$으로 계산한다.
+$\mbox{RPKM = Total fragments / Mapped Reads(millions)*Exon Length(Kb)}$으로 계산한다.
 ```{r}
 head(e)
 ```
@@ -166,6 +175,10 @@ s %>%
   group_by(stage) %>%
   summarise(avg_pc = mean(protein_coding), avg_a_ig = mean(activated_ig), avg_ia_ig=mean(inactivated_ig), avg_nc_rna=mean(noncoding_rna)) %>%
   ggplot() +
+  geom_point(aes(stage, avg_pc),col="#CC79A7") +
+  geom_point(aes(stage, avg_a_ig),col="#009E73") +
+  geom_point(aes(stage, avg_ia_ig),col="#56B4E9") +
+  geom_point(aes(stage, avg_nc_rna),col="#E69F00") +
   geom_line(aes(stage, avg_pc),col="#CC79A7") +
   geom_line(aes(stage, avg_a_ig),col="#009E73") +
   geom_line(aes(stage, avg_ia_ig),col="#56B4E9") +
@@ -176,9 +189,10 @@ s %>%
   geom_text(aes(x=10, y=0.003,label="Inactivated Ig"), colour="#56B4E9")+
   scale_y_log10() +
   scale_x_continuous(breaks = seq(0,12,1)) +
-  ggtitle("Gene Expression in Brain by Stage") + 
-  xlab("Stage") + 
-  ylab("Expression (RPKM, log scale)")+
+  ggtitle("Gene Expressions in Brain by Stage") +
+  xlab("Developmental Stages") + 
+  ylab("Average Expression 
+(RPKM, Log Scale)")+
   theme(panel.grid.minor.x = element_blank())
 ```
 
