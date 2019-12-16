@@ -1,0 +1,118 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+1.  From   the   dataset   `heights`   in   the   `dslabs`   package,   please   describe   the distribution   of   male   and   female   heights.   If   you   pick   a   female   at   random,   what   is the   probability   that   she   is   61   inches   or   shorter?
+```{r}
+library(dslabs)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+data("heights")
+
+Male<-heights %>% filter(sex=="Male") %>% pull(height)
+Female<-heights %>% filter(sex=="Female") %>% pull(height)
+```
+
+```{r}
+data.frame(Male) %>% ggplot(aes(Male)) + geom_histogram(color = "black", fill="grey")
+```
+Male의 그래프는 완벽한 normal distribution은 아니지만 비교적 가운데에 몰려서 분ㅠㅗ하고 있음을 알 수 있다.
+
+```{r}
+data.frame(Female) %>% ggplot(aes(Female)) + geom_histogram(color = "black", fill="grey")
+```
+Female의 분포도 완벽하지는 않지만 어느 정도 normal distribution을 따르고 있다.
+
+Female의 값 중 하나를 선택했을 때 그것이 61보다 작거나 같을 확률은 아래와 같다.
+```{r}
+mean(Female<=61)
+```
+
+
+2.  For   American   Roulette,   there   are   19   reds,   16   blacks   and   3   greens.   The   payout for   winning   on   green   is   15   dollars.   You   create   a   random   variable   that   is   the   sum   of your   winnings   after   betting   on   green   1000   times.   Start   your   code   by   setting   the seed   to   1.   Describe   your   random   variable   (e.g.   the   expected   value,   the   standard error).   Then,   create   a   Monte   Carlo   simulation   that   generates   1,000   outcomes   of   a random   variable,   and   then   describe   your   result.
+
+```{r}
+set.seed(1)
+color <- rep(c("Black", "Red", "Green"), c(16, 19, 3))
+```
+
+내가 카지노 입장이라고 생각하면, 손님이 green이 나오면 15dollar를 잃고, 아니면 15dollar를 얻는다.
+게임을 1000번 했을 때의 결과가 X이고, 1000번의 게임 후 X를 모두 더한 값이 S이다. 1000번의 게임을 한번 실행했을 때 다음과 같은 결과값이 나온다.
+```{r}
+n <- 1000
+X <- sample(c(-15,15), n, replace = TRUE, prob=c(3/38, 35/38))
+S <- sum(X)
+S
+```
+
+S의 standard error와 expected value는 공식에 의해 아래와 같이 계산할 수 있다.
+```{r}
+ev<- n * (-15*3/38 + 15*35/38)
+se<- sqrt(n) * 2 * sqrt(3*35)/38 
+```
+
+1000번의 게임을 하는 실행을 1000번 했을 때 나오는 random variable S의 값을 알기 위해 아래와 같이 monte carlo simulation을 한다.
+```{r}
+B <- 1000
+roulette_winnings <- function(n){
+  X <- sample(c(-15,15), n, replace = TRUE, prob=c(3/38, 35/38))
+  sum(X)
+}
+S <- replicate(B, roulette_winnings(n))
+```
+
+random variable S의 분포는 아래와 같다.
+```{r}
+data.frame(S) %>% ggplot(aes(S)) + geom_histogram(color = "black", fill="grey")
+```
+어느 정도 normal distribution을 따른다.
+
+```{r}
+mean(S<0)
+```
+S가 0보다 작을 확률은 0이므로 1000번의 게임을 했을 때, 카지노가 돈을 잃을 일은 없다. 
+
+
+
+3.  From   the   poll   example,   we   will   create   a   Monte   Carlo   simulation   for   p   =   0.45. You   will   compare   the   sampling   size   (N)   for   10,   1000,   and   the   repeat   size   (B)   for 100,   10000.   So   you   should   have   four   combinations   (10   N   x   100   B,   1000   N   x   100   B, 10   N   x   10000   B,   1000   N   x   10000   B).   Please   describe   your   Monte   Carlo   simulation results,   and   compare   four   combinations. 
+
+```{r}
+N <- 1000
+B <- 10000
+p<-0.45
+inside <- replicate(B, {
+  x <- sample(c(0,1), size = N, replace = TRUE, prob = c(1-p, p))
+  x_hat <- mean(x)
+  se_hat <- sqrt(x_hat * (1 - x_hat) / N)
+  return(c(x_hat, se_hat))
+})
+
+d<-as.data.frame(t(inside))
+colnames(d) = c("x_hat", "se_hat")
+
+d<-d %>% 
+  mutate(low=x_hat - 1.96 * se_hat, 
+         high = x_hat + 1.96 * se_hat)
+
+plot4<- d %>% 
+  mutate(poll=seq(1,B), estimate=(low+high)/2) %>%
+  head(n=100) %>%
+  ggplot(aes(poll,estimate)) + 
+  geom_point() +  geom_hline(yintercept = p) + 
+  coord_flip()
+```
+plot1은 N=10, B=100, plot2는 N=1000, B=100, plot3는 N=10, B=10000, plot4는 N=1000, B=10000일 때이다. 
+
+```{r}
+library(cowplot)
+plot_grid(plot1, plot2, plot3, plot4)
+```
+축 통일이 안 되어 있지만, plot1,2와 plot3,4의 비교를 통해 B값이 작을수록 확실이 분포가 더 넓게 퍼져 있다는 것을 알 수 있다. plot1,3과 plot2,4의 비교를 통해 N값이 작을 때는 중복되는 값들이 많은 것을 알 수 있다. 
+
+
+
